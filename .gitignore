@@ -1,0 +1,6 @@
+node_modules
+.next
+.env.local
+chat.db
+chat.db-wal
+chat.db-shm
