@@ -3,10 +3,10 @@ import { requireAuth } from '@/lib/auth';
 import { updateProfilePicture, getUserById } from '@/lib/db';
 
 export async function POST(req: NextRequest) {
-  const user = await requireAuth(req);
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
   try {
+    const user = await requireAuth();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { profilePictureUrl } = await req.json();
 
     if (!profilePictureUrl || typeof profilePictureUrl !== 'string') {
@@ -14,10 +14,10 @@ export async function POST(req: NextRequest) {
     }
 
     // Update the database
-    await updateProfilePicture(user.id, profilePictureUrl);
+    await updateProfilePicture(user.userId, profilePictureUrl);
 
     // Fetch and return the updated user
-    const updatedUser = await getUserById(user.id);
+    const updatedUser = await getUserById(user.userId);
 
     return NextResponse.json(updatedUser, { status: 200 });
   } catch (error) {
