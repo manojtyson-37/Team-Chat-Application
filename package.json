@@ -8,8 +8,10 @@
     "start": "next start"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
     "@libsql/client": "^0.14.0",
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.3",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
