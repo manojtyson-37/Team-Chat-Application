@@ -20,10 +20,15 @@ export async function GET() {
 
     // Try a simple query
     const result = await client.execute('SELECT 1 as test');
+
+    // Also check the schema of the users table
+    const schemaResult = await client.execute("PRAGMA table_info(users)");
+
     return NextResponse.json({
       success: true,
       message: 'Database connected successfully',
-      result
+      result,
+      usersTableSchema: schemaResult.rows
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
