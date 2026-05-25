@@ -6,10 +6,12 @@ let client: Client;
 
 function getClient() {
   if (!client) {
-    client = createClient({
-      url: process.env.TURSO_DATABASE_URL!,
-      authToken: process.env.TURSO_AUTH_TOKEN,
-    });
+    const url = process.env.TURSO_DATABASE_URL;
+    const token = process.env.TURSO_AUTH_TOKEN;
+    console.log(`[DB] Creating Turso client with URL: ${url?.substring(0, 40)}...`);
+    if (!url) throw new Error('TURSO_DATABASE_URL not set');
+    if (!token) throw new Error('TURSO_AUTH_TOKEN not set');
+    client = createClient({ url, authToken: token });
   }
   return client;
 }
