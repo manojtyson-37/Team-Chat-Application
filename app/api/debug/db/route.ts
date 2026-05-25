@@ -32,7 +32,7 @@ export async function GET() {
     return NextResponse.json({
       success: false,
       error: message,
-      stack: stack.split('\n').slice(0, 3).join('\n')
+      stack: stack ? stack.split('\n').slice(0, 3).join('\n') : ''
     }, { status: 500 });
   }
 }
