@@ -163,19 +163,19 @@ export async function getMessages(channelId: number, after?: number, parentId?: 
   const args: (number | null)[] = [channelId];
 
   if (parentId !== undefined) {
-    sql = `SELECT m.*, u.avatar_color, u.profile_picture_url FROM messages m
+    sql = `SELECT m.*, u.avatar_color FROM messages m
            LEFT JOIN users u ON m.user_id = u.id
            WHERE m.parent_id = ? ORDER BY m.id ASC`;
     args.length = 0;
     args.push(parentId!);
   } else if (after) {
-    sql = `SELECT m.*, u.avatar_color, u.profile_picture_url FROM messages m
+    sql = `SELECT m.*, u.avatar_color FROM messages m
            LEFT JOIN users u ON m.user_id = u.id
            WHERE m.channel_id = ? AND m.id > ? AND m.parent_id IS NULL
            ORDER BY m.id ASC`;
     args.push(after);
   } else {
-    sql = `SELECT m.*, u.avatar_color, u.profile_picture_url FROM messages m
+    sql = `SELECT m.*, u.avatar_color FROM messages m
            LEFT JOIN users u ON m.user_id = u.id
            WHERE m.channel_id = ? AND m.parent_id IS NULL
            ORDER BY m.id DESC LIMIT 100`;
