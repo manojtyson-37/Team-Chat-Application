@@ -41,14 +41,26 @@ export async function getUserByUsername(username: string): Promise<(User & { pas
 
 export async function getUserById(id: number): Promise<User | null> {
   const d = await db();
-  const result = await d.execute({ sql: 'SELECT id, username, avatar_color, profile_picture_url, created_at, last_seen_at FROM users WHERE id = ?', args: [id] });
-  return (result.rows[0] as unknown as User) || null;
+  const result = await d.execute({
+    sql: 'SELECT id, username, avatar_color, created_at, last_seen_at FROM users WHERE id = ?',
+    args: [id]
+  });
+  const row = result.rows[0] as any;
+  if (!row) return null;
+  // Add profile_picture_url with null default if it doesn't exist in database
+  return {
+    ...row,
+    profile_picture_url: row.profile_picture_url || null
+  } as User;
 }
 
 export async function getAllUsers(): Promise<User[]> {
   const d = await db();
-  const result = await d.execute('SELECT id, username, avatar_color, profile_picture_url, created_at, last_seen_at FROM users');
-  return result.rows as unknown as User[];
+  const result = await d.execute('SELECT id, username, avatar_color, created_at, last_seen_at FROM users');
+  return result.rows.map(row => ({
+    ...row,
+    profile_picture_url: null
+  })) as unknown as User[];
 }
 
 export async function updateLastSeen(userId: number) {
