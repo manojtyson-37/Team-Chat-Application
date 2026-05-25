@@ -27,8 +27,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ chan
     }));
 
     return NextResponse.json(enriched);
-  } catch {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Messages endpoint error:', message);
+    return NextResponse.json({ error: message || 'Unauthorized' }, { status: 401 });
   }
 }
 
@@ -44,7 +46,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cha
       parseInt(channelId), parentId, mediaUrl, mediaType
     );
     return NextResponse.json(message);
-  } catch {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Post message endpoint error:', message);
+    return NextResponse.json({ error: message || 'Unauthorized' }, { status: 401 });
   }
 }
