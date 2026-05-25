@@ -10,7 +10,8 @@ export async function GET() {
     if (!session) return NextResponse.json(null, { status: 401 });
     const user = await getUserById(session.userId);
     if (!user) return NextResponse.json(null, { status: 401 });
-    await updateLastSeen(user.id);
+    // Update last seen asynchronously - don't block the response
+    updateLastSeen(user.id).catch(err => console.error('Failed to update last seen:', err));
     return NextResponse.json(user);
   } catch (error) {
     console.error('Auth/me error:', error);
