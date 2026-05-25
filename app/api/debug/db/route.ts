@@ -1,12 +1,38 @@
 import { NextResponse } from 'next/server';
-import { getAllUsers } from '@/lib/db';
+import { createClient } from '@libsql/client';
 
 export async function GET() {
   try {
-    const users = await getAllUsers();
-    return NextResponse.json({ success: true, userCount: users.length, users: users.slice(0, 5) });
+    const url = process.env.TURSO_DATABASE_URL;
+    const token = process.env.TURSO_AUTH_TOKEN;
+
+    if (!url || !token) {
+      return NextResponse.json({
+        success: false,
+        error: 'Missing TURSO env vars',
+        hasUrl: !!url,
+        hasToken: !!token
+      }, { status: 500 });
+    }
+
+    const client = createClient({ url, authToken: token });
+    console.log(`Attempting to execute query on ${url}`);
+
+    // Try a simple query
+    const result = await client.execute('SELECT 1 as test');
+    return NextResponse.json({
+      success: true,
+      message: 'Database connected successfully',
+      result
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    const stack = error instanceof Error ? error.stack : '';
+    console.error('DB test error:', message, stack);
+    return NextResponse.json({
+      success: false,
+      error: message,
+      stack: stack.split('\n').slice(0, 3).join('\n')
+    }, { status: 500 });
   }
 }
